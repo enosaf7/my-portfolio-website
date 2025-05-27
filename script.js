@@ -6,9 +6,7 @@ let currentText = "";
 let letter = "";
 
 function type() {
-    if (count === texts.length) {
-        count = 0;
-    }
+    if (count === texts.length) count = 0;
     currentText = texts[count];
     letter = currentText.slice(0, ++index);
 
@@ -22,10 +20,37 @@ function type() {
     }
 }
 
+// Theme Switcher
+const themeSwitch = document.getElementById("theme-switch");
+const themeIcon = document.querySelector(".theme-icon");
+
+function setTheme(isDark) {
+    if (isDark) {
+        document.body.classList.add("dark-theme");
+        themeIcon.textContent = "☀️";
+        localStorage.setItem("theme", "dark");
+    } else {
+        document.body.classList.remove("dark-theme");
+        themeIcon.textContent = "🌙";
+        localStorage.setItem("theme", "light");
+    }
+}
+
+if (themeSwitch) {
+    themeSwitch.addEventListener("click", () => {
+        const isDark = !document.body.classList.contains("dark-theme");
+        setTheme(isDark);
+    });
+    // Set theme from localStorage
+    const userTheme = localStorage.getItem("theme");
+    if (userTheme === "dark") setTheme(true);
+    else setTheme(false);
+}
+
 // Start typing animation when page loads
 document.addEventListener("DOMContentLoaded", () => {
     type();
-    
+
     // Smooth scrolling for navigation links
     document.querySelectorAll('a[href^="#"]').forEach(anchor => {
         anchor.addEventListener('click', function (e) {
@@ -60,22 +85,18 @@ document.addEventListener("DOMContentLoaded", () => {
     if (contactForm) {
         contactForm.addEventListener('submit', async function(e) {
             e.preventDefault();
-            
+
             try {
                 const response = await fetch(this.action, {
                     method: 'POST',
                     body: new FormData(this),
-                    headers: {
-                        'Accept': 'application/json'
-                    }
+                    headers: { 'Accept': 'application/json' }
                 });
-                
+
                 if (response.ok) {
-                    // Form submitted successfully
                     contactForm.reset();
                     alert('Thank you for your message! I will get back to you soon.');
                 } else {
-                    // Error in submission
                     const data = await response.json();
                     throw new Error(data.error || 'Form submission failed');
                 }
@@ -87,11 +108,8 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
-// Scroll animations
-const observerOptions = {
-    threshold: 0.1
-};
-
+// Section fade-in animation
+const observerOptions = { threshold: 0.1 };
 const observer = new IntersectionObserver(entries => {
     entries.forEach(entry => {
         if (entry.isIntersecting) {
@@ -100,7 +118,6 @@ const observer = new IntersectionObserver(entries => {
     });
 }, observerOptions);
 
-// Observe all sections
 document.querySelectorAll('section').forEach(section => {
     observer.observe(section);
 });
